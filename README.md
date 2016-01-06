@@ -32,6 +32,14 @@ by Peijie You
 -   stop word in scholar
 -   命名实体?
 
+##  Other
+-   Python2 this time
+-   http://cs.stanford.edu/people/karpathy/nips2015/
+
+##  Requirement
+-   python2
+-   pdfminer
+
 ---
 
 ##  Thank You

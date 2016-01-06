@@ -1,0 +1,866 @@
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body>
+<span style="position:absolute; border: gray 1px solid; left:0px; top:50px; width:612px; height:792px;"></span>
+<div style="position:absolute; top:50px;"><a name="1">Page 1</a></div>
+<div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:128px; top:154px; width:355px; height:22px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:22px">Convolutional Neural Networks with Intra-layer
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:150px; top:174px; width:311px; height:22px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:22px">Recurrent Connections for Scene Labeling
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:176px; top:237px; width:50px; height:12px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:12px">Ming Liang
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:286px; top:237px; width:46px; height:12px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:12px">Xiaolin Hu
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:393px; top:237px; width:41px; height:12px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:12px">Bo Zhang
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:144px; top:249px; width:322px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Tsinghua National Laboratory for Information Science and Technology (TNList)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:206px; top:260px; width:199px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Department of Computer Science and Technology
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:192px; top:271px; width:226px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Center for Brain-Inspired Computing Research (CBICR)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:145px; top:289px; width:321px; height:15px;"><span style="font-family: LQSRDF+NimbusMonL-Regu; font-size:9px">liangm07@mails.tsinghua.edu.cn, </span><span style="font-family: SBKTUN+CMSY9; font-size:15px">{</span><span style="font-family: LQSRDF+NimbusMonL-Regu; font-size:9px">xlhu,dcszb</span><span style="font-family: SBKTUN+CMSY9; font-size:15px">}</span><span style="font-family: LQSRDF+NimbusMonL-Regu; font-size:9px">@tsinghua.edu.cn
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:217px; top:282px; width:176px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Tsinghua University, Beijing 100084, China
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:283px; top:331px; width:44px; height:15px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:15px">Abstract
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:143px; top:357px; width:324px; height:154px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Scene labeling is a challenging computer vision task. It requires the use of both
+<br>local discriminative features and global context information. We adopt a deep
+<br>recurrent convolutional neural network (RCNN) for this task, which is originally
+<br>proposed for object recognition. Different from traditional convolutional neural
+<br>networks (CNN), this model has intra-layer recurrent connections in the convo-
+<br>lutional layers. Therefore each convolutional layer becomes a two-dimensional
+<br>recurrent neural network. The units receive constant feed-forward inputs from the
+<br>previous layer and recurrent inputs from their neighborhoods. While recurrent
+<br>iterations proceed, the region of context captured by each unit expands. In this
+<br>way, feature extraction and context modulation are seamlessly integrated, which
+<br>is different from typical methods that entail separate modules for the two steps.
+<br>To further utilize the context, a multi-scale RCNN is proposed. Over two bench-
+<br>mark datasets, Standford Background and Sift Flow, the model outperforms many
+<br>state-of-the-art models in accuracy and efﬁciency.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:529px; width:5px; height:15px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:15px">1
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:125px; top:529px; width:64px; height:15px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:15px">Introduction
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:555px; width:396px; height:226px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Scene labeling (or scene parsing) is an important step towards high-level image interpretation. It
+<br>aims at fully parsing the input image by labeling the semantic category of each pixel. Compared
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">with image classiﬁcation, scene labeling is more challenging as it simultaneously solves both seg-
+<br>mentation and recognition. The typical approach for scene labeling consists of two steps. First,
+<br>extract local handcrafted features [6, 15, 26, 23, 27]. Second, integrate context information using
+<br>probabilistic graphical models [6, 5, 18] or other techniques [24, 21]. In recent years, motivated by
+<br>the success of deep neural networks in learning visual representations, CNN [12] is incorporated in-
+<br>to this framework for feature extraction. However, since CNN does not have an explicit mechanism
+<br>to modulate its features with context, to achieve better results, other methods such as conditional
+<br>random ﬁeld (CRF) [5] and recursive parsing tree [21] are still needed to integrate the context infor-
+<br>mation. It would be interesting to have a neural network capable of performing scene labeling in an
+<br>end-to-end manner.
+<br>A natural way to incorporate context modulation in neural networks is to introduce recurrent con-
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">nections. This has been extensively studied in sequence learning tasks such as online handwriting
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">recognition [8], speech recognition [9] and machine translation [25]. The sequential data has strong
+<br>correlations along the time axis. Recurrent neural networks (RNN) are suitable for these tasks be-
+<br>cause the long-range context information can be captured by a ﬁxed number of recurrent weights.
+<br>Treating scene labeling as a two-dimensional variant of sequence learning, RNN can also be applied,
+<br>but the studies are relatively scarce. Recently, a recurrent CNN (RCNN) in which the output of the
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">top layer of a CNN is integrated with the input in the bottom is successfully applied to scene labeling
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:303px; top:799px; width:4px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">1
+<br></span></div><span style="position:absolute; border: black 1px solid; left:108px; top:139px; width:396px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:108px; top:211px; width:396px; height:0px;"></span>
+<span style="position:absolute; border: gray 1px solid; left:0px; top:892px; width:612px; height:792px;"></span>
+<div style="position:absolute; top:892px;"><a name="2">Page 2</a></div>
+<div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:1183px; width:396px; height:22px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Figure 1: Training and testing processes of multi-scale RCNN for scene labeling. Solid lines denote
+<br>feed-forward connections and dotted lines denote recurrent connections.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:1225px; width:396px; height:199px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">[19]. Without the aid of extra preprocessing or post-processing techniques, it achieves competitive
+<br>results. This type of recurrent connections captures both local and global information for labeling
+<br>a pixel, but it achieves this goal indirectly as it does not model the relationship between pixels (or
+<br>the corresponding units in the hidden layers of CNN) in the 2D space explicitly. To achieve the goal
+<br>directly, recurrent connections are required to be between units within layers. This type of RCNN
+<br>has been proposed in [14], but there it is used for object recognition. It is unknown if it is useful for
+<br>scene labeling, a more challenging task. This motivates the present work.
+<br>A prominent structural property of RCNN is that feed-forward and recurrent connections co-exist
+<br>in multiple layers. This property enables the seamless integration of feature extraction and context
+<br>modulation in multiple levels of representation. In other words, an RCNN can be seen as a deep
+<br>RNN which is able to encode the multi-level context dependency. Therefore we expect RCNN to be
+<br>competent for scene labeling.
+<br>Multi-scale is another technique for capturing both local and global information for scene labeling
+<br>[5]. Therefore we adopt a multi-scale RCNN [14]. An RCNN is used for each scale. See Figure 1 for
+<br>its overall architecture. The networks in different scales have exactly the same structure and weights.
+<br>The outputs of all networks are concatenated and input to a softmax layer. The model operates in an
+<br>end-to-end fashion, and does not need any preprocessing or post-processing techniques.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:1440px; width:89px; height:15px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:15px">2 Related Work
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:1468px; width:396px; height:155px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Many models, either non-parametric [15, 27, 3, 23, 26] or parametric [6, 13, 18], have been proposed
+<br>for scene labeling. A comprehensive review is beyond the scope of this paper. Below we brieﬂy
+<br>review the neural network models for scene labeling.
+<br>In [5], a multi-scale CNN is used to extract local features for scene labeling. The weights are shared
+<br>among the CNNs for all scales to keep the number of parameters small. However, the multi-scale
+<br>scheme alone has no explicit mechanism to ensure the consistency of neighboring pixels’ labels.
+<br>Some post-processing techniques, such as superpixels and CRF, are shown to signiﬁcantly improve
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">the performance of multi-scale CNN. In [1], CNN features are combined with a fully connected
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">CRF for more accurate segmentations. In both models [5, 1] CNN and CRF are trained in separated
+<br>stages. In [29] CRF is reformulated and implemented as an RNN, which can be jointly trained with
+<br>CNN by back-propagation (BP) algorithm.
+<br>In [24], a recursive neural network is used to learn a mapping from visual features to the semantic
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">space, which is then used to determine the labels of pixels. In [21], a recursive context propagation
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:303px; top:1641px; width:4px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">2
+<br></span></div><div style="position:absolute; border: figure 1px solid; writing-mode:False; left:147px; top:901px; width:385px; height:270px;"><span style="position:absolute; border: black 1px solid; left:79px; top:894px; width:466px; height:350px;"></span>
+<div style="position:absolute; border: figure 1px solid; writing-mode:False; left:207px; top:994px; width:23px; height:23px;"></div><div style="position:absolute; border: figure 1px solid; writing-mode:False; left:207px; top:1020px; width:23px; height:23px;"></div><div style="position:absolute; border: figure 1px solid; writing-mode:False; left:207px; top:1046px; width:23px; height:23px;"></div><div style="position:absolute; border: figure 1px solid; writing-mode:False; left:150px; top:1013px; width:39px; height:39px;"></div><span style="position:absolute; border: black 1px solid; left:306px; top:1005px; width:30px; height:23px;"></span>
+<span style="position:absolute; border: black 1px solid; left:295px; top:999px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:295px; top:1009px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:283px; top:1003px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:999px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:1009px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:235px; top:1003px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:307px; top:1027px; width:30px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:295px; top:1022px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:295px; top:1032px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:283px; top:1026px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:1022px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:1032px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:235px; top:1026px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:306px; top:1028px; width:30px; height:23px;"></span>
+<span style="position:absolute; border: black 1px solid; left:295px; top:1046px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:295px; top:1056px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:283px; top:1050px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:1046px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:1056px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:235px; top:1050px; width:11px; height:3px;"></span>
+<span style="font-family: ABCDEE+Cambria Math; font-size:11px">𝐟</span><span style="font-family: ABCDEE+Cambria Math; font-size:8px">𝑛</span><span style="font-family: ABCDEE+Calibri; font-size:11px"> </span><span style="font-family: ABCDEE+Calibri; font-size:7px">concatenate Valid convolutions Extract patch and resize <span style="position:absolute; border: black 1px solid; left:189px; top:1031px; width:17px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:189px; top:1006px; width:17px; height:25px;"></span>
+<span style="position:absolute; border: black 1px solid; left:189px; top:1033px; width:17px; height:25px;"></span>
+<span style="position:absolute; border: black 1px solid; left:353px; top:1029px; width:30px; height:3px;"></span>
+classify “boat” Softmax <span style="position:absolute; border: black 1px solid; left:272px; top:999px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:272px; top:1009px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:259px; top:1003px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:272px; top:1022px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:272px; top:1032px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:259px; top:1026px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:272px; top:1046px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:272px; top:1056px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:259px; top:1050px; width:11px; height:3px;"></span>
+<div style="position:absolute; border: figure 1px solid; writing-mode:False; left:166px; top:1080px; width:39px; height:39px;"></div><span style="position:absolute; border: black 1px solid; left:271px; top:1102px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:271px; top:1112px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:259px; top:1107px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:223px; top:1102px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:223px; top:1112px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:210px; top:1106px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:271px; top:1123px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:271px; top:1133px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:259px; top:1127px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:223px; top:1123px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:223px; top:1133px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:210px; top:1127px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:271px; top:1142px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:271px; top:1152px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:259px; top:1146px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:223px; top:1142px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:223px; top:1152px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:210px; top:1146px; width:11px; height:3px;"></span>
+Same convolutions Downsample <span style="position:absolute; border: black 1px solid; left:247px; top:1102px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:1112px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:235px; top:1106px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:1123px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:1133px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:235px; top:1127px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:1142px; width:11px; height:11px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:1152px; width:10px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:235px; top:1146px; width:11px; height:3px;"></span>
+<div style="position:absolute; border: figure 1px solid; writing-mode:False; left:186px; top:1122px; width:19px; height:19px;"></div><div style="position:absolute; border: figure 1px solid; writing-mode:False; left:192px; top:1144px; width:14px; height:14px;"></div><div style="position:absolute; border: figure 1px solid; writing-mode:False; left:410px; top:1109px; width:39px; height:39px;"></div><span style="position:absolute; border: black 1px solid; left:282px; top:1107px; width:36px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:319px; top:1102px; width:14px; height:14px;"></span>
+<span style="position:absolute; border: black 1px solid; left:297px; top:1125px; width:9px; height:9px;"></span>
+<span style="position:absolute; border: black 1px solid; left:283px; top:1128px; width:13px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:298px; top:1145px; width:4px; height:4px;"></span>
+<span style="position:absolute; border: black 1px solid; left:283px; top:1145px; width:13px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:307px; top:1128px; width:11px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:319px; top:1123px; width:14px; height:14px;"></span>
+<span style="position:absolute; border: black 1px solid; left:319px; top:1140px; width:14px; height:14px;"></span>
+<span style="position:absolute; border: black 1px solid; left:333px; top:1109px; width:15px; height:19px;"></span>
+<span style="position:absolute; border: black 1px solid; left:333px; top:1129px; width:15px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:333px; top:1133px; width:15px; height:14px;"></span>
+</span><span style="font-family: ABCDEE+Cambria Math; font-size:11px">{𝐟</span><span style="font-family: ABCDEE+Cambria Math; font-size:8px">𝑛</span><span style="font-family: ABCDEE+Cambria Math; font-size:11px">}</span><span style="font-family: ABCDEE+Calibri; font-size:11px"> <span style="position:absolute; border: black 1px solid; left:303px; top:1145px; width:16px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:350px; top:1123px; width:14px; height:14px;"></span>
+<div style="position:absolute; border: figure 1px solid; writing-mode:False; left:380px; top:1124px; width:14px; height:14px;"></div><span style="position:absolute; border: black 1px solid; left:364px; top:1129px; width:15px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:394px; top:1128px; width:15px; height:3px;"></span>
+</span><span style="font-family: ABCDEE+Calibri; font-size:7px">Upsample Concatenate Classify Upsample </span><span style="font-family: ABCDEE+Calibri,Bold; font-size:9px">Image-wise test Patch-wise training </span><span style="font-family: ABCDEE+Cambria Math; font-size:11px">𝐲</span><span style="font-family: ABCDEE+Cambria Math; font-size:8px">𝒏</span><span style="font-family: ABCDEE+Calibri,Bold; font-size:11px"> <span style="position:absolute; border: black 1px solid; left:397px; top:1016px; width:24px; height:15px;"></span>
+<span style="position:absolute; border: black 1px solid; left:397px; top:1030px; width:24px; height:15px;"></span>
+</span><span style="font-family: ABCDEE+Calibri; font-size:7px">Cross entropy loss <span style="position:absolute; border: black 1px solid; left:374px; top:1049px; width:30px; height:3px;"></span>
+</span><span style="font-family: ABCDEE+Cambria Math; font-size:11px">𝐥</span><span style="font-family: ABCDEE+Cambria Math; font-size:8px">𝒏</span><span style="font-family: ABCDEE+Calibri,Bold; font-size:11px"> </span><span style="font-family: ABCDEE+Calibri; font-size:7px">label </span></div><span style="position:absolute; border: gray 1px solid; left:0px; top:1734px; width:612px; height:792px;"></span>
+<div style="position:absolute; top:1734px;"><a name="3">Page 3</a></div>
+<div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:1815px; width:396px; height:193px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">network (rCPN) is proposed to better make use of the global context information. The rCPN is fed a
+<br>superpixel representation of CNN features. Through a parsing tree, the rCPN recursively aggregates
+<br>context information from all superpixels and then disseminates it to each superpixel. Although
+<br>recursive neural network is related to RNN as they both use weight sharing between different layers,
+<br>they have signiﬁcant structural difference. The former has a single path from the input layer to the
+<br>output layer while the latter has multiple paths [14]. As will be shown in Section 4, this difference
+<br>has great inﬂuence on the performance in scene labeling.
+<br>To the best of our knowledge, the ﬁrst end-to-end neural network model for scene labeling refers
+<br>to the deep CNN proposed in [7]. The model is trained by a supervised greedy learning strategy.
+<br>In [19], another end-to-end model is proposed. Top-down recurrent connections are incorporated
+<br>into a CNN to capture context information. In the ﬁrst recurrent iteration, the CNN receives a raw
+<br>patch and outputs a predicted label map (downsampled due to pooling). In other iterations, the CNN
+<br>receives both a downsampled patch and the label map predicted in the previous iteration and then
+<br>outputs a new predicted label map. Compared with the models in [5, 21], this approach is simple
+<br>and elegant but its performance is not the best on some benchmark datasets. It is noted that both
+<br>models in [14] and [19] are called RCNN. For convenience, in what follows, if not speciﬁed, RCNN
+<br>refers to the model in [14].
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:2022px; width:50px; height:15px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:15px">3 Model
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:2047px; width:51px; height:12px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:12px">3.1 RCNN
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:2068px; width:396px; height:23px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">The key module of the RCNN is the RCL. A generic RNN with feed-forward input </span><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:12px">u</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">t</span><span style="font-family: FCRDZR+CMR10; font-size:9px">)</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, internal
+<br>state </span><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:12px">x</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">t</span><span style="font-family: FCRDZR+CMR10; font-size:9px">) </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and parameters </span><span style="font-family: OKODYU+CMMI10; font-size:9px">θ </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">can be described by:
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:249px; top:2089px; width:112px; height:17px;"><span style="font-family: NIZTEP+CMBX10; font-size:9px">x</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">t</span><span style="font-family: FCRDZR+CMR10; font-size:9px">) = </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">F</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: NIZTEP+CMBX10; font-size:9px">u</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">t</span><span style="font-family: FCRDZR+CMR10; font-size:9px">)</span><span style="font-family: OKODYU+CMMI10; font-size:9px">, </span><span style="font-family: NIZTEP+CMBX10; font-size:9px">x</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">t </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">− </span><span style="font-family: FCRDZR+CMR10; font-size:9px">1)</span><span style="font-family: OKODYU+CMMI10; font-size:9px">, θ</span><span style="font-family: FCRDZR+CMR10; font-size:9px">)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:2105px; width:396px; height:56px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">where </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">F </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">is the function describing the dynamic behavior of RNN.
+<br>The RCL introduces recurrent connections into a convolutional layer (see Figure 2</span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:11px">A </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">for an illus-
+<br>tration). It can be regarded as a special two-dimensional RNN, whose feed-forward and recurrent
+<br>computations both take the form of convolution.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:188px; top:2170px; width:47px; height:10px;"><span style="font-family: OKODYU+CMMI10; font-size:9px">x</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">ijk</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">t</span><span style="font-family: FCRDZR+CMR10; font-size:9px">) = </span><span style="font-family: OKODYU+CMMI10; font-size:9px">σ
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:244px; top:2167px; width:16px; height:12px;"><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: NIZTEP+CMBX10; font-size:9px">w</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">f
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:256px; top:2163px; width:77px; height:19px;"><span style="font-family: DTYXFB+CMMI7; font-size:6px">k </span><span style="font-family: FCRDZR+CMR10; font-size:9px">)</span><span style="font-family: CQBXVR+CMSY7; font-size:12px">(cid:62)</span><span style="font-family: NIZTEP+CMBX10; font-size:9px">u</span><span style="font-family: BZAOED+CMR7; font-size:6px">(</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">i,j</span><span style="font-family: BZAOED+CMR7; font-size:6px">)</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">t</span><span style="font-family: FCRDZR+CMR10; font-size:9px">) + (</span><span style="font-family: NIZTEP+CMBX10; font-size:9px">w</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">r
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:330px; top:2162px; width:86px; height:19px;"><span style="font-family: DTYXFB+CMMI7; font-size:6px">k</span><span style="font-family: FCRDZR+CMR10; font-size:9px">)</span><span style="font-family: CQBXVR+CMSY7; font-size:12px">(cid:62)</span><span style="font-family: NIZTEP+CMBX10; font-size:9px">x</span><span style="font-family: BZAOED+CMR7; font-size:6px">(</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">i,j</span><span style="font-family: BZAOED+CMR7; font-size:6px">)</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">t </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">− </span><span style="font-family: FCRDZR+CMR10; font-size:9px">1) + </span><span style="font-family: OKODYU+CMMI10; font-size:9px">b</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">k
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:238px; top:2135px; width:5px; height:37px;"><span style="font-family: MBDKZY+CMEX10; font-size:37px">(cid:16)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:417px; top:2135px; width:5px; height:37px;"><span style="font-family: MBDKZY+CMEX10; font-size:37px">(cid:17)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:492px; top:2095px; width:11px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">(1)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:492px; top:2168px; width:11px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">(2)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:492px; top:2257px; width:11px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">(3)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:2188px; width:396px; height:58px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">where </span><span style="font-family: NIZTEP+CMBX10; font-size:9px">u</span><span style="font-family: BZAOED+CMR7; font-size:6px">(</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">i,j</span><span style="font-family: BZAOED+CMR7; font-size:6px">) </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and </span><span style="font-family: NIZTEP+CMBX10; font-size:9px">x</span><span style="font-family: BZAOED+CMR7; font-size:6px">(</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">i,j</span><span style="font-family: BZAOED+CMR7; font-size:6px">) </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">are vectorized square patches centered at </span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">i, j</span><span style="font-family: FCRDZR+CMR10; font-size:9px">) </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">of the feature maps of the
+<br>previous layer and the current layer, </span><span style="font-family: NIZTEP+CMBX10; font-size:9px">w</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">f
+<br>k </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">are the weights of feed-forward and recurrent
+<br>connections for the </span><span style="font-family: OKODYU+CMMI10; font-size:9px">k</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">th feature map, and </span><span style="font-family: OKODYU+CMMI10; font-size:9px">b</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">k </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">is the </span><span style="font-family: OKODYU+CMMI10; font-size:9px">k</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">th element of the bias. </span><span style="font-family: OKODYU+CMMI10; font-size:9px">σ </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">used in this paper
+<br>is composed of two functions </span><span style="font-family: OKODYU+CMMI10; font-size:9px">σ</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">z</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">ijk</span><span style="font-family: FCRDZR+CMR10; font-size:9px">) = </span><span style="font-family: OKODYU+CMMI10; font-size:9px">h</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">g</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">z</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">ijk</span><span style="font-family: FCRDZR+CMR10; font-size:9px">))</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, where </span><span style="font-family: OKODYU+CMMI10; font-size:9px">g </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">is the widely used rectiﬁed linear
+<br>function </span><span style="font-family: OKODYU+CMMI10; font-size:9px">g</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">z</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">ijk</span><span style="font-family: FCRDZR+CMR10; font-size:9px">) = max (</span><span style="font-family: OKODYU+CMMI10; font-size:9px">z</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">ijk</span><span style="font-family: OKODYU+CMMI10; font-size:9px">, </span><span style="font-family: FCRDZR+CMR10; font-size:9px">0)</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, and </span><span style="font-family: OKODYU+CMMI10; font-size:9px">h </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">is the local response normalization (LRN) [11]:
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:270px; top:2201px; width:39px; height:14px;"><span style="font-family: DTYXFB+CMMI7; font-size:6px">k </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and </span><span style="font-family: NIZTEP+CMBX10; font-size:9px">w</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">r
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:200px; top:2258px; width:52px; height:10px;"><span style="font-family: OKODYU+CMMI10; font-size:9px">h</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">g</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">z</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">ijk</span><span style="font-family: FCRDZR+CMR10; font-size:9px">)) =
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:257px; top:2237px; width:32px; height:55px;"><span style="font-family: MBDKZY+CMEX10; font-size:37px"></span><span style="font-family: FCRDZR+CMR10; font-size:9px">1 + </span><span style="font-family: DTYXFB+CMMI7; font-size:6px">α
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:284px; top:2286px; width:5px; height:6px;"><span style="font-family: DTYXFB+CMMI7; font-size:6px">L
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:319px; top:2252px; width:28px; height:10px;"><span style="font-family: OKODYU+CMMI10; font-size:9px">g</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">z</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">ijk</span><span style="font-family: FCRDZR+CMR10; font-size:9px">)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:296px; top:2247px; width:50px; height:37px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:8px">min</span><span style="font-family: BZAOED+CMR7; font-size:6px">(</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">K,k</span><span style="font-family: BZAOED+CMR7; font-size:6px">+</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">L/</span><span style="font-family: BZAOED+CMR7; font-size:6px">2)</span><span style="font-family: MBDKZY+CMEX10; font-size:37px">(cid:88)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:290px; top:2290px; width:61px; height:12px;"><span style="font-family: DTYXFB+CMMI7; font-size:6px">k</span><span style="font-family: EXPITJ+CMSY5; font-size:8px">(cid:48)</span><span style="font-family: BZAOED+CMR7; font-size:6px">=</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:8px">max</span><span style="font-family: BZAOED+CMR7; font-size:6px">(0</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">,k</span><span style="font-family: CQBXVR+CMSY7; font-size:12px">−</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">L/</span><span style="font-family: BZAOED+CMR7; font-size:6px">2)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:352px; top:2278px; width:43px; height:12px;"><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">g</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">z</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">ijk</span><span style="font-family: EXPITJ+CMSY5; font-size:8px">(cid:48)</span><span style="font-family: FCRDZR+CMR10; font-size:9px">))</span><span style="font-family: BZAOED+CMR7; font-size:6px">2
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:396px; top:2237px; width:13px; height:55px;"><span style="font-family: MBDKZY+CMEX10; font-size:37px"></span><span style="font-family: DTYXFB+CMMI7; font-size:6px">β
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:2306px; width:396px; height:145px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">where </span><span style="font-family: OKODYU+CMMI10; font-size:9px">K </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">is the number of feature maps, </span><span style="font-family: OKODYU+CMMI10; font-size:9px">α </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and </span><span style="font-family: OKODYU+CMMI10; font-size:9px">β </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">are constants controlling the amplitude of normal-
+<br>ization. The LRN forces the units in the same location to compete for high activities, which mimics
+<br>the lateral inhibition in the cortex. In our experiments, LRN is found to consistently improve the
+<br>accuracy, though slightly. Following [11], </span><span style="font-family: OKODYU+CMMI10; font-size:9px">α </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and </span><span style="font-family: OKODYU+CMMI10; font-size:9px">β </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">are set to </span><span style="font-family: FCRDZR+CMR10; font-size:9px">0</span><span style="font-family: OKODYU+CMMI10; font-size:9px">.</span><span style="font-family: FCRDZR+CMR10; font-size:9px">001 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and </span><span style="font-family: FCRDZR+CMR10; font-size:9px">0</span><span style="font-family: OKODYU+CMMI10; font-size:9px">.</span><span style="font-family: FCRDZR+CMR10; font-size:9px">75</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, respectively. </span><span style="font-family: OKODYU+CMMI10; font-size:9px">L </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">is set
+<br>to </span><span style="font-family: OKODYU+CMMI10; font-size:9px">K/</span><span style="font-family: FCRDZR+CMR10; font-size:9px">8 + 1</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">.
+<br>During the training or testing phase, an RCL is unfolded for </span><span style="font-family: OKODYU+CMMI10; font-size:9px">T </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">time steps into a multi-layer sub-
+<br>network. </span><span style="font-family: OKODYU+CMMI10; font-size:9px">T </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">is a predetermined hyper-parameter. See Figure 2</span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:11px">B </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">for an example with </span><span style="font-family: OKODYU+CMMI10; font-size:9px">T </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 3</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">. The
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">receptive ﬁeld (RF) of each unit expands with larger </span><span style="font-family: OKODYU+CMMI10; font-size:9px">T </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, so that more context information is cap-
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">tured. The depth of the subnetwork also increases with larger </span><span style="font-family: OKODYU+CMMI10; font-size:9px">T </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">. In the meantime, the number of
+<br>parameters is kept constant due to weight sharing.
+<br>Let </span><span style="font-family: NIZTEP+CMBX10; font-size:9px">u</span><span style="font-family: BZAOED+CMR7; font-size:6px">0 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">denote the static input (</span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:11px">e.g.</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, an image). The input to the RCL, denoted by </span><span style="font-family: NIZTEP+CMBX10; font-size:9px">u</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">t</span><span style="font-family: FCRDZR+CMR10; font-size:9px">)</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, can take this
+<br>constant </span><span style="font-family: NIZTEP+CMBX10; font-size:9px">u</span><span style="font-family: BZAOED+CMR7; font-size:6px">0 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">for all </span><span style="font-family: OKODYU+CMMI10; font-size:9px">t</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">. But here we adopt a more general form:
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:282px; top:2455px; width:47px; height:10px;"><span style="font-family: NIZTEP+CMBX10; font-size:9px">u</span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">t</span><span style="font-family: FCRDZR+CMR10; font-size:9px">) = </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ</span><span style="font-family: NIZTEP+CMBX10; font-size:9px">u</span><span style="font-family: BZAOED+CMR7; font-size:6px">0
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:303px; top:2483px; width:4px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">3
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:492px; top:2454px; width:11px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">(4)
+<br></span></div><span style="position:absolute; border: black 1px solid; left:257px; top:2264px; width:153px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:284px; top:2286px; width:5px; height:0px;"></span>
+<span style="position:absolute; border: gray 1px solid; left:0px; top:2576px; width:612px; height:792px;"></span>
+<div style="position:absolute; top:2576px;"><a name="4">Page 4</a></div>
+<div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:2755px; width:396px; height:22px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Figure 2: Illustration of the RCL and RCNN used in this paper. Sold arrows denote feed-forward
+<br>connections and dotted arrows denote recurrent connections.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:2791px; width:396px; height:248px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">where </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">∈ </span><span style="font-family: FCRDZR+CMR10; font-size:9px">[0</span><span style="font-family: OKODYU+CMMI10; font-size:9px">, </span><span style="font-family: FCRDZR+CMR10; font-size:9px">1] </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">is a discount factor, which determines the tradeoff between the feed-forward com-
+<br>ponent and the recurrent component. When </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 0</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, the feed-forward component is totally discarded
+<br>after the ﬁrst iteration. In this case the network behaves like the so-called </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:11px">recursive convolutional
+<br>network </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">[4], in which several convolutional layers have tied weights. There is only one path from
+<br>input to output. When </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ &gt; </span><span style="font-family: FCRDZR+CMR10; font-size:9px">0</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, the network is a typical RNN. There are multiple paths from input to
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">output (see Figure 2</span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:11px">B</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">).
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">RCNN is composed of a stack of RCLs. Between neighboring RCLs there are only feed-forward
+<br>connections. Max pooling layers are optionally interleaved between RCLs. The total number of
+<br>recurrent iterations is set to </span><span style="font-family: OKODYU+CMMI10; font-size:9px">T </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">for all </span><span style="font-family: OKODYU+CMMI10; font-size:9px">N </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">RCLs. There are two approaches to unfold an RCNN.
+<br>First, unfold the RCLs one by one, and each RCL is unfolded for </span><span style="font-family: OKODYU+CMMI10; font-size:9px">T </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">time steps before feeding to
+<br>the next RCL (see Figure 2</span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:11px">C</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">). This unfolding approach multiplicatively increases the depth of the
+<br>network. The largest depth of the network is proportional to </span><span style="font-family: OKODYU+CMMI10; font-size:9px">N T </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">. In the second approach, at each
+<br>time step the states of all RCLs are updated successively (see Figure 2</span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:11px">D</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">). The unfolded network
+<br>has a two-dimensional structure whose </span><span style="font-family: OKODYU+CMMI10; font-size:9px">x </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">axis is the time step and </span><span style="font-family: OKODYU+CMMI10; font-size:9px">y </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">axis is the level of layer. This
+<br>unfolding approach additively increases the depth of the network. The largest depth of the network
+<br>is proportional to </span><span style="font-family: OKODYU+CMMI10; font-size:9px">N </span><span style="font-family: FCRDZR+CMR10; font-size:9px">+ </span><span style="font-family: OKODYU+CMMI10; font-size:9px">T </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">.
+<br>We adopt the ﬁrst unfolding approach due to the following advantages. First, it leads to larger
+<br>effective RF and depth, which are important for the performance of the model. Second, the second
+<br>approach is more computationally intensive since the feed-forward inputs need to be updated at each
+<br>time step. However, in the ﬁrst approach the feed-forward input of each RCL needs to be computed
+<br>for only once.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:3052px; width:101px; height:12px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:12px">3.2 Multi-scale RCNN
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:3074px; width:396px; height:77px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">In natural scenes objects appear in various sizes. To capture this variability, the model should be
+<br>scale invariant. In [5], a multi-scale CNN is proposed to extract features for scene labeling, in which
+<br>several CNNs with shared weights are used to process images of different scales. This approach is
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">adopted to construct the multi-scale RCNN (see Figure 1). The original image corresponds to the
+<br>ﬁnest scale. Images of coarser scales are obtained simply by max pooling the original image. The
+<br>outputs of all RCNNs are concatenated to form the ﬁnal representation. For pixel </span><span style="font-family: OKODYU+CMMI10; font-size:9px">p</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, its probability
+<br>falling into the </span><span style="font-family: OKODYU+CMMI10; font-size:9px">c</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">th semantic category is given by a softmax layer:
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:240px; top:3130px; width:69px; height:58px;"><span style="font-family: DTYXFB+CMMI7; font-size:6px">c </span><span style="font-family: NIZTEP+CMBX10; font-size:9px">f </span><span style="font-family: DTYXFB+CMMI7; font-size:6px">p</span><span style="font-family: MBDKZY+CMEX10; font-size:37px">(cid:1)
+<br></span><span style="font-family: FCRDZR+CMR10; font-size:9px">exp</span><span style="font-family: MBDKZY+CMEX10; font-size:37px">(cid:0)</span><span style="font-family: NIZTEP+CMBX10; font-size:9px">w</span><span style="font-family: CQBXVR+CMSY7; font-size:12px">(cid:62)
+<br></span><span style="font-family: DTYXFB+CMMI7; font-size:6px">c</span><span style="font-family: EXPITJ+CMSY5; font-size:8px">(cid:48) </span><span style="font-family: FCRDZR+CMR10; font-size:9px">exp</span><span style="font-family: MBDKZY+CMEX10; font-size:37px">(cid:0)</span><span style="font-family: NIZTEP+CMBX10; font-size:9px">w</span><span style="font-family: CQBXVR+CMSY7; font-size:12px">(cid:62)
+<br></span><span style="font-family: DTYXFB+CMMI7; font-size:6px">c</span><span style="font-family: EXPITJ+CMSY5; font-size:8px">(cid:48) </span><span style="font-family: NIZTEP+CMBX10; font-size:9px">f </span><span style="font-family: DTYXFB+CMMI7; font-size:6px">p</span><span style="font-family: MBDKZY+CMEX10; font-size:37px">(cid:1)
+<br>(cid:80)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:216px; top:3167px; width:20px; height:13px;"><span style="font-family: OKODYU+CMMI10; font-size:9px">y</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">p
+<br>c </span><span style="font-family: FCRDZR+CMR10; font-size:9px">=
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:331px; top:3168px; width:64px; height:9px;"><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">c </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 1</span><span style="font-family: OKODYU+CMMI10; font-size:9px">, </span><span style="font-family: FCRDZR+CMR10; font-size:9px">2</span><span style="font-family: OKODYU+CMMI10; font-size:9px">, ..., C</span><span style="font-family: FCRDZR+CMR10; font-size:9px">)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:492px; top:3167px; width:11px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">(5)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:3193px; width:395px; height:52px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">where </span><span style="font-family: NIZTEP+CMBX10; font-size:9px">f </span><span style="font-family: DTYXFB+CMMI7; font-size:6px">p </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">denotes the concatenated feature vector of pixel </span><span style="font-family: OKODYU+CMMI10; font-size:9px">p</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, and </span><span style="font-family: OKODYU+CMMI10; font-size:9px">w</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">c </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">denotes the weight for the </span><span style="font-family: OKODYU+CMMI10; font-size:9px">c</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">th
+<br>category.
+<br>The loss function is the cross entropy between the predicted probability </span><span style="font-family: OKODYU+CMMI10; font-size:9px">y</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">p
+<br></span><span style="font-family: DTYXFB+CMMI7; font-size:6px">c </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">:
+<br></span><span style="font-family: FCRDZR+CMR10; font-size:9px">ˆ</span><span style="font-family: OKODYU+CMMI10; font-size:9px">y</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">p
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:405px; top:3221px; width:98px; height:13px;"><span style="font-family: DTYXFB+CMMI7; font-size:6px">c </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and the true hard label
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:257px; top:3216px; width:43px; height:42px;"><span style="font-family: CVKOMN+CMSY10; font-size:17px">L </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">−</span><span style="font-family: MBDKZY+CMEX10; font-size:37px">(cid:88)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:302px; top:3216px; width:14px; height:37px;"><span style="font-family: MBDKZY+CMEX10; font-size:37px">(cid:88)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:318px; top:3247px; width:35px; height:13px;"><span style="font-family: FCRDZR+CMR10; font-size:9px">ˆ</span><span style="font-family: OKODYU+CMMI10; font-size:9px">y</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">p
+<br>c </span><span style="font-family: FCRDZR+CMR10; font-size:9px">log </span><span style="font-family: OKODYU+CMMI10; font-size:9px">y</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">p
+<br>c
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:492px; top:3247px; width:11px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">(6)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:139px; top:3274px; width:139px; height:13px;"><span style="font-family: DTYXFB+CMMI7; font-size:6px">c </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 1 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">if pixel </span><span style="font-family: OKODYU+CMMI10; font-size:9px">p </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">is labeld as </span><span style="font-family: OKODYU+CMMI10; font-size:9px">c </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and </span><span style="font-family: FCRDZR+CMR10; font-size:9px">ˆ</span><span style="font-family: OKODYU+CMMI10; font-size:9px">y</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">p
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:3274px; width:396px; height:33px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">where </span><span style="font-family: FCRDZR+CMR10; font-size:9px">ˆ</span><span style="font-family: OKODYU+CMMI10; font-size:9px">y</span><span style="font-family: DTYXFB+CMMI7; font-size:6px">p
+<br>c </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 0 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">otherwise. The model is trained by backpropagation
+<br>through time (BPTT) [28], that is, unfolding all the RCNNs to feed-forward networks and apply the
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">BP algorithm.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:291px; top:3263px; width:4px; height:6px;"><span style="font-family: DTYXFB+CMMI7; font-size:6px">p
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:308px; top:3263px; width:3px; height:6px;"><span style="font-family: DTYXFB+CMMI7; font-size:6px">c
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:303px; top:3325px; width:4px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">4
+<br></span></div><div style="position:absolute; border: figure 1px solid; writing-mode:False; left:107px; top:2574px; width:406px; height:169px;"><span style="position:absolute; border: black 1px solid; left:97px; top:2656px; width:428px; height:171px;"></span>
+<span style="position:absolute; border: black 1px solid; left:175px; top:2691px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:183px; top:2692px; width:7px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:179px; top:2700px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:193px; top:2688px; width:10px; height:13px;"></span>
+<div style="position:absolute; border: figure 1px solid; writing-mode:False; left:109px; top:2669px; width:58px; height:32px;"></div><span style="position:absolute; border: black 1px solid; left:122px; top:2683px; width:3px; height:4px;"></span>
+<span style="position:absolute; border: black 1px solid; left:141px; top:2676px; width:3px; height:4px;"></span>
+<span style="position:absolute; border: black 1px solid; left:132px; top:2676px; width:3px; height:4px;"></span>
+<span style="position:absolute; border: black 1px solid; left:141px; top:2683px; width:3px; height:4px;"></span>
+<span style="position:absolute; border: black 1px solid; left:136px; top:2684px; width:6px; height:2px;"></span>
+<span style="position:absolute; border: black 1px solid; left:124px; top:2684px; width:8px; height:2px;"></span>
+<span style="position:absolute; border: black 1px solid; left:135px; top:2679px; width:6px; height:4px;"></span>
+<span style="position:absolute; border: black 1px solid; left:132px; top:2683px; width:3px; height:4px;"></span>
+<span style="position:absolute; border: black 1px solid; left:123px; top:2676px; width:3px; height:4px;"></span>
+<span style="position:absolute; border: black 1px solid; left:142px; top:2692px; width:3px; height:4px;"></span>
+<span style="position:absolute; border: black 1px solid; left:121px; top:2692px; width:3px; height:4px;"></span>
+<span style="position:absolute; border: black 1px solid; left:124px; top:2686px; width:9px; height:28px;"></span>
+<span style="position:absolute; border: black 1px solid; left:134px; top:2686px; width:8px; height:28px;"></span>
+<span style="position:absolute; border: black 1px solid; left:124px; top:2686px; width:9px; height:42px;"></span>
+<span style="position:absolute; border: black 1px solid; left:134px; top:2686px; width:8px; height:42px;"></span>
+<span style="position:absolute; border: black 1px solid; left:132px; top:2686px; width:2px; height:9px;"></span>
+<span style="position:absolute; border: black 1px solid; left:132px; top:2676px; width:2px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:124px; top:2685px; width:7px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:135px; top:2685px; width:7px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:126px; top:2679px; width:6px; height:4px;"></span>
+<div style="position:absolute; border: figure 1px solid; writing-mode:False; left:122px; top:2713px; width:21px; height:16px;"></div><span style="position:absolute; border: black 1px solid; left:132px; top:2692px; width:3px; height:4px;"></span>
+<span style="position:absolute; border: black 1px solid; left:220px; top:2720px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:220px; top:2703px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:198px; top:2726px; width:22px; height:2px;"></span>
+<span style="position:absolute; border: black 1px solid; left:223px; top:2712px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:220px; top:2686px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:223px; top:2694px; width:2px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:220px; top:2669px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:223px; top:2677px; width:2px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:198px; top:2675px; width:21px; height:51px;"></span>
+<span style="position:absolute; border: black 1px solid; left:198px; top:2692px; width:21px; height:35px;"></span>
+<span style="position:absolute; border: black 1px solid; left:198px; top:2709px; width:21px; height:17px;"></span>
+<span style="position:absolute; border: black 1px solid; left:244px; top:2702px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:251px; top:2703px; width:7px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:2712px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:244px; top:2685px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:251px; top:2686px; width:7px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:247px; top:2694px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:264px; top:2687px; width:10px; height:13px;"></span>
+<span style="position:absolute; border: black 1px solid; left:289px; top:2721px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:289px; top:2703px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:268px; top:2726px; width:22px; height:2px;"></span>
+<span style="position:absolute; border: black 1px solid; left:292px; top:2712px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:289px; top:2686px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:292px; top:2695px; width:2px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:289px; top:2669px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:292px; top:2678px; width:2px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:268px; top:2675px; width:21px; height:51px;"></span>
+<span style="position:absolute; border: black 1px solid; left:268px; top:2692px; width:21px; height:35px;"></span>
+<span style="position:absolute; border: black 1px solid; left:268px; top:2710px; width:21px; height:17px;"></span>
+<span style="position:absolute; border: black 1px solid; left:319px; top:2721px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:319px; top:2703px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:298px; top:2673px; width:23px; height:54px;"></span>
+<span style="position:absolute; border: black 1px solid; left:322px; top:2712px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:319px; top:2686px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:322px; top:2695px; width:2px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:319px; top:2669px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:322px; top:2678px; width:2px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:298px; top:2674px; width:22px; height:3px;"></span>
+<span style="position:absolute; border: black 1px solid; left:298px; top:2674px; width:21px; height:16px;"></span>
+<span style="position:absolute; border: black 1px solid; left:298px; top:2674px; width:21px; height:33px;"></span>
+<span style="font-family: ABCDEE+Calibri; font-size:7px">Unfold a RCL  An RCL unit (red) Multiplicatively unfold two RCLs <span style="position:absolute; border: black 1px solid; left:467px; top:2692px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:475px; top:2693px; width:7px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:471px; top:2701px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:467px; top:2675px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:475px; top:2676px; width:7px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:471px; top:2684px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:468px; top:2709px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:471px; top:2718px; width:2px; height:8px;"></span>
+pooling pooling <span style="position:absolute; border: black 1px solid; left:465px; top:2707px; width:14px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:465px; top:2689px; width:14px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:470px; top:2665px; width:2px; height:8px;"></span>
+RCNN 32 64 128 <span style="position:absolute; border: black 1px solid; left:373px; top:2700px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:373px; top:2683px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:376px; top:2692px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:393px; top:2700px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:393px; top:2683px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:396px; top:2692px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:382px; top:2703px; width:11px; height:2px;"></span>
+<span style="position:absolute; border: black 1px solid; left:382px; top:2687px; width:11px; height:2px;"></span>
+<span style="position:absolute; border: black 1px solid; left:414px; top:2700px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:414px; top:2683px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:402px; top:2703px; width:11px; height:2px;"></span>
+<span style="position:absolute; border: black 1px solid; left:402px; top:2687px; width:11px; height:2px;"></span>
+<span style="position:absolute; border: black 1px solid; left:417px; top:2692px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:435px; top:2701px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:435px; top:2683px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:438px; top:2692px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:424px; top:2704px; width:11px; height:2px;"></span>
+<span style="position:absolute; border: black 1px solid; left:424px; top:2688px; width:11px; height:2px;"></span>
+<span style="position:absolute; border: black 1px solid; left:376px; top:2709px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:396px; top:2709px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:418px; top:2709px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:438px; top:2709px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:342px; top:2702px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:350px; top:2703px; width:7px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:346px; top:2711px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:342px; top:2685px; width:8px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:350px; top:2686px; width:7px; height:7px;"></span>
+<span style="position:absolute; border: black 1px solid; left:346px; top:2694px; width:2px; height:8px;"></span>
+<span style="position:absolute; border: black 1px solid; left:360px; top:2687px; width:10px; height:13px;"></span>
+Additively unfold two RCLs </span><span style="font-family: ABCDEE+Calibri; font-size:8px">A B C D E </span></div><span style="position:absolute; border: black 1px solid; left:240px; top:3174px; width:69px; height:0px;"></span>
+<span style="position:absolute; border: gray 1px solid; left:0px; top:3418px; width:612px; height:792px;"></span>
+<div style="position:absolute; top:3418px;"><a name="5">Page 5</a></div>
+<div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:3498px; width:209px; height:12px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:12px">3.3 Patch-wise Training and Image-wise Testing
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:3522px; width:396px; height:291px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Most neural network models for scene labeling [5, 19, 21] are trained by the patch-wise approach.
+<br>The training samples are randomly cropped image patches whose labels correspond to the categories
+<br>of their center pixels. Valid convolutions are used in both feed-forward and recurrent computation.
+<br>The patch is set to a proper size so that the last feature map has exactly the size of </span><span style="font-family: FCRDZR+CMR10; font-size:9px">1 </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">× </span><span style="font-family: FCRDZR+CMR10; font-size:9px">1</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">.
+<br>In
+<br>image-wise training, an image is input to the model and the output has exactly the same size as the
+<br>image. The loss is the average of all pixels’ loss. We have conducted experiments with both training
+<br>methods, and found that image-wise training seriously suffered from over-ﬁtting. A possible reason
+<br>is that the pixels in an image have too strong correlations. So patch-wise training is used in all our
+<br>experiments. In [16], it is suggested that image-wise and patch-wise training are equally effective
+<br>and the former is faster to converge. But their model is obtained by ﬁnetuning the VGG [22] model
+<br>pretrained on ImageNet [2]. This conclusion may not hold for models trained from scratch.
+<br>In the testing phase, the patch-wise approach is time consuming because the patches corresponding
+<br>to all pixels need to be processed. We therefore use image-wise testing. There are two image-wise
+<br>testing approaches to obtain dense label maps. The ﬁrst is the Shift-and-stitch approach [20, 19].
+<br>When the predicted label map is downsampled by a factor of </span><span style="font-family: OKODYU+CMMI10; font-size:9px">s</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, the original image will be shifted
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and processed for </span><span style="font-family: OKODYU+CMMI10; font-size:9px">s</span><span style="font-family: BZAOED+CMR7; font-size:6px">2 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">times. At each time, the image is shifted by </span><span style="font-family: FCRDZR+CMR10; font-size:9px">(</span><span style="font-family: OKODYU+CMMI10; font-size:9px">x, y</span><span style="font-family: FCRDZR+CMR10; font-size:9px">) </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">pixels to the right and
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">down. Both </span><span style="font-family: OKODYU+CMMI10; font-size:9px">x </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and </span><span style="font-family: OKODYU+CMMI10; font-size:9px">y </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">take their value from </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">{</span><span style="font-family: FCRDZR+CMR10; font-size:9px">0</span><span style="font-family: OKODYU+CMMI10; font-size:9px">, </span><span style="font-family: FCRDZR+CMR10; font-size:9px">1</span><span style="font-family: OKODYU+CMMI10; font-size:9px">, </span><span style="font-family: FCRDZR+CMR10; font-size:9px">2</span><span style="font-family: OKODYU+CMMI10; font-size:9px">, . . . , s </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">− </span><span style="font-family: FCRDZR+CMR10; font-size:9px">1</span><span style="font-family: CVKOMN+CMSY10; font-size:17px">}</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, and the shifted image is padded
+<br>in their left and top borders with zero. The outputs for all shifted images are interleaved so that
+<br>each pixel has a corresponding prediction. Shift-and-stitch approach needs to process the image for
+<br></span><span style="font-family: OKODYU+CMMI10; font-size:9px">s</span><span style="font-family: BZAOED+CMR7; font-size:6px">2 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">times although it produces the exact prediction as the patch-wise testing. The second approach
+<br>inputs the entire image to the network and obtains downsampled label map, then simply upsample
+<br>the map to the same resolution as the input image, using bilinear or other interpolation methods (see
+<br>Figure 1, bottom). This approach may suffer from the loss of accuracy, but is very efﬁcient. The
+<br>deconvolutional layer proposed in [16] is adopted for upsampling, which is the backpropagation
+<br>counterpart of the convolutional layer. The deconvolutional weights are set to simulates the bilinear
+<br>interpolation. Both of the image-wise testing methods are used in our experiments.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:3832px; width:83px; height:15px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:15px">4 Experiments
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:3861px; width:116px; height:12px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:12px">4.1 Experimental Settings
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:3884px; width:396px; height:265px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Experiments are performed over two benchmark datasets for scene labeling, Sift Flow [15] and
+<br>Stanford Background [6]. The Sift Flow dataset contains 2688 color images, all of which have the
+<br>size of </span><span style="font-family: FCRDZR+CMR10; font-size:9px">256</span><span style="font-family: CVKOMN+CMSY10; font-size:17px">× </span><span style="font-family: FCRDZR+CMR10; font-size:9px">256 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">pixels. Among them 2488 images are training data, and the remaining 200 images
+<br>are testing data. There are 33 semantic categories, and the class frequency is highly unbalanced.
+<br>The Stanford background dataset contains 715 color images, most of them have the size of </span><span style="font-family: FCRDZR+CMR10; font-size:9px">320 </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">×
+<br></span><span style="font-family: FCRDZR+CMR10; font-size:9px">240 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">pixels. Following [6] 5-fold cross validation is used over this dataset. In each fold there are
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">572 training images and 143 testing images. The pixels have 8 semantic categories and the class
+<br>frequency is more balanced than the Sift Flow dataset.
+<br>In most of our experiments, RCNN has three parameterized layers (Figure 2</span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:11px">E</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">). The ﬁrst parame-
+<br>terized layer is a convolutional layer followed by a </span><span style="font-family: FCRDZR+CMR10; font-size:9px">2 </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">× </span><span style="font-family: FCRDZR+CMR10; font-size:9px">2 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">non-overlapping max pooling layer. This
+<br>is to reduce the size of feature maps and thus save the computing cost and memory. The other two
+<br>parameterized layers are RCLs. Another </span><span style="font-family: FCRDZR+CMR10; font-size:9px">2 </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">× </span><span style="font-family: FCRDZR+CMR10; font-size:9px">2 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">max pooling layer is placed between the two RCLs.
+<br>The numbers of feature maps in these layers are 32, 64 and 128. The ﬁlter size in the ﬁrst convolu-
+<br>tional layer is </span><span style="font-family: FCRDZR+CMR10; font-size:9px">7 </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">× </span><span style="font-family: FCRDZR+CMR10; font-size:9px">7</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, and the feed-forward and recurrent ﬁlters in RCLs are all </span><span style="font-family: FCRDZR+CMR10; font-size:9px">3 </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">× </span><span style="font-family: FCRDZR+CMR10; font-size:9px">3</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">. Three scales
+<br>of images are used and neighboring scales differed by a factor of 2 in each side of the image.
+<br>The models are implemented using Caffe [10]. They are trained using stochastic gradient descent
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">algorithm. For the Sift Flow dataset, the hyper-parameters are determined on a separate validation
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">set. The same set of hyper-parameters is then used for the Stanford Background dataset. Dropout
+<br>and weight decay are used to prevent over-ﬁtting. Two dropout layers are used, one after the second
+<br>pooling layer and the other before the concatenation of different scales. The dropout ratio is 0.5 and
+<br>weight decay coefﬁcient is 0.0001. The base learning rate is </span><span style="font-family: FCRDZR+CMR10; font-size:9px">0</span><span style="font-family: OKODYU+CMMI10; font-size:9px">.</span><span style="font-family: FCRDZR+CMR10; font-size:9px">001</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, which is reduced to </span><span style="font-family: FCRDZR+CMR10; font-size:9px">0</span><span style="font-family: OKODYU+CMMI10; font-size:9px">.</span><span style="font-family: FCRDZR+CMR10; font-size:9px">0001 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">when
+<br>the training error enters a plateau. Overall, about ten millions patches have been input to the model
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">during training.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:303px; top:4167px; width:4px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">5
+<br></span></div><span style="position:absolute; border: gray 1px solid; left:0px; top:4260px; width:612px; height:792px;"></span>
+<div style="position:absolute; top:4260px;"><a name="6">Page 6</a></div>
+<div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:4341px; width:396px; height:55px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Data augmentation is used in many models [5, 21] for scene labeling to prevent over-ﬁtting. It is a
+<br>technique to distort the training data with a set of transformations, so that additional data is generated
+<br>to improve the generalization ability of the models. This technique is only used in Section 4.3 for
+<br>the sake of fairness in comparison with other models. Augmentation includes horizontal reﬂection
+<br>and resizing.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:4410px; width:88px; height:12px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:12px">4.2 Model Analysis
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:4431px; width:396px; height:66px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">We empirically analyze the performance of RCNN models for scene labeling on the Sift Flow
+<br>dataset. The results are shown in Table 1. Two metrics, the per-pixel accuracy (PA) and the av-
+<br>erage per-class accuracy (CA) are used. PA is the ratio of correctly classiﬁed pixels to the total
+<br>pixels in testing images. CA is the average of all category-wise accuracies. The following result-
+<br>s are obtained using the shift-and-stitch testing and without any data augmentation. Note that all
+<br>models have a multi-scale architecture.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:199px; top:4506px; width:24px; height:11px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">Model
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:280px; top:4506px; width:93px; height:11px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">Patch size No. Param.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:386px; top:4506px; width:70px; height:11px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">PA (%) CA (%)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:171px; top:4517px; width:79px; height:30px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">γ </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 1</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">T </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 3
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">γ </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 1</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">T </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 4
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">γ </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 1</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">T </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 5
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:161px; top:4547px; width:100px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN-large, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">γ </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 1</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">T </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 3
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:171px; top:4557px; width:79px; height:30px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">γ </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 0</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">T </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 3
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">γ </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 0</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">T </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 4
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">γ </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 0</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">T </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 5
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:161px; top:4587px; width:100px; height:41px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN-large, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">γ </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 0</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">T </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 3
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">γ </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 0</span><span style="font-family: BOERXQ+CMMI9; font-size:8px">.</span><span style="font-family: ASFOFI+CMR9; font-size:8px">25</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">T </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 5
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">γ </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 0</span><span style="font-family: BOERXQ+CMMI9; font-size:8px">.</span><span style="font-family: ASFOFI+CMR9; font-size:8px">5</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">T </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 5
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">γ </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 0</span><span style="font-family: BOERXQ+CMMI9; font-size:8px">.</span><span style="font-family: ASFOFI+CMR9; font-size:8px">75</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">T </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 5
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:154px; top:4628px; width:114px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN, no share, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">γ </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 1</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, </span><span style="font-family: BOERXQ+CMMI9; font-size:8px">T </span><span style="font-family: ASFOFI+CMR9; font-size:8px">= 5
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:200px; top:4638px; width:23px; height:20px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">CNN1
+<br>CNN2
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:293px; top:4517px; width:13px; height:141px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">232
+<br>256
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">256
+<br>256
+<br>232
+<br>256
+<br>256
+<br>256
+<br>256
+<br>256
+<br>256
+<br>256
+<br>88
+<br>136
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:340px; top:4517px; width:23px; height:141px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">0.28M
+<br>0.28M
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">0.28M
+<br>0.65M
+<br>0.28M
+<br>0.28M
+<br>0.28M
+<br>0.65M
+<br>0.28M
+<br>0.28M
+<br>0.28M
+<br>0.28M
+<br>0.33M
+<br>0.28M
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:393px; top:4517px; width:15px; height:141px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">80.3
+<br>81.6
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">82.3
+<br></span><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">83.4
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">80.5
+<br>79.9
+<br>80.4
+<br>78.1
+<br>82.4
+<br>81.8
+<br>82.8
+<br>81.3
+<br>74.9
+<br>78.5
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:434px; top:4517px; width:15px; height:141px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">31.9
+<br>33.2
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">34.3
+<br></span><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">38.9
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">34.2
+<br>31.4
+<br>31.7
+<br>29.4
+<br>35.4
+<br>34.7
+<br>35.8
+<br>33.3
+<br>24.1
+<br>28.8
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:4668px; width:396px; height:33px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Table 1: Model analysis over the Sift Flow dataset. We limit the maximum size of input patch to
+<br>256, which is the size of the image in the Sift Flow dataset. This is achieved by replacing the ﬁrst
+<br>few </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:11px">valid </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">convolutions by </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:11px">same </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">convolutions.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:4715px; width:396px; height:276px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">First, the inﬂuence of </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">in (4) is investigated. The patch sizes of images for different models are set
+<br>such that the size of the last feature map is </span><span style="font-family: FCRDZR+CMR10; font-size:9px">1 </span><span style="font-family: CVKOMN+CMSY10; font-size:17px">× </span><span style="font-family: FCRDZR+CMR10; font-size:9px">1</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">. We mainly investigate two speciﬁc values </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 1
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 0 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">with different iteration number </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:11px">T</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">. Several other values of </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">are tested with </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:11px">T</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">=5. See
+<br>Table 1 for details. For RCNN with </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 1</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, the performance monotonously increase with more time
+<br>steps. This is not the case for RCNN with </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 0</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, with which the network tends to be over-ﬁtting
+<br>with more iterations. To further investigate this issue, a larger model denoted as RCNN-large is
+<br>tested. It has four RCLs, and has more parameters and larger depth. With </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 1 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">it achieves a better
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">performance than RCNN. However, the RCNN-large with </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 0 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">obtains worse performance than
+<br>RCNN. When </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">is set to other values, </span><span style="font-family: FCRDZR+CMR10; font-size:9px">0</span><span style="font-family: OKODYU+CMMI10; font-size:9px">.</span><span style="font-family: FCRDZR+CMR10; font-size:9px">25</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, </span><span style="font-family: FCRDZR+CMR10; font-size:9px">0</span><span style="font-family: OKODYU+CMMI10; font-size:9px">.</span><span style="font-family: FCRDZR+CMR10; font-size:9px">5 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">or </span><span style="font-family: FCRDZR+CMR10; font-size:9px">0</span><span style="font-family: OKODYU+CMMI10; font-size:9px">.</span><span style="font-family: FCRDZR+CMR10; font-size:9px">75</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, the performance seems better than </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 1
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">but the difference is small.
+<br>Second, the inﬂuence of weight sharing in recurrent connections is investigated. Another RCNN
+<br>with </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 1 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and </span><span style="font-family: OKODYU+CMMI10; font-size:9px">T </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 5 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">is tested. Its recurrent weights in different iterations are not shared anymore,
+<br>which leads to more parameters than shared ones. But this setting leads to worse accuracy both for
+<br>PA and CA. A possible reason is that more parameters make the model more prone to over-ﬁtting.
+<br>Third, two feed-forward CNNs are constructed for comparison. CNN1 is constructed by removing
+<br>all recurrent connections from RCNN, and then increasing the numbers of feature maps in each
+<br>layer from 32, 64 and 128 to 60, 120 and 240, respectively. CNN2 is constructed by removing
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">the recurrent connections and adding two extra convolutional layers. CNN2 had ﬁve convolutional
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">layers and the corresponding numbers of feature maps are 32, 64, 64, 128 and 128, respectively.
+<br>With these settings, the two models have approximately the same number of parameters as RCNN,
+<br>which is for the sake of fair comparison. The two CNNs are outperformed by the RCNNs by a
+<br>signiﬁcant margin. Compared with the RCNN, the topmost units in these two CNNs cover much
+<br>smaller regions (see the patch size column in Table 1). Note that all convolutionas in these models
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">are performed in “valid” mode. This mode decreases the size of feature maps and as a consequence
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:303px; top:5009px; width:4px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">6
+<br></span></div><span style="position:absolute; border: black 1px solid; left:148px; top:4508px; width:314px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:148px; top:4519px; width:314px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:148px; top:4559px; width:314px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:148px; top:4599px; width:314px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:148px; top:4630px; width:314px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:148px; top:4640px; width:314px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:148px; top:4660px; width:314px; height:0px;"></span>
+<span style="position:absolute; border: gray 1px solid; left:0px; top:5102px; width:612px; height:792px;"></span>
+<div style="position:absolute; top:5102px;"><a name="7">Page 7</a></div>
+<div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:5287px; width:396px; height:22px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Figure 3: Examples of scene labeling results from the Stanford Background dataset. “mntn” denotes
+<br>mountains, and “object” denotes foreground objects.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:5328px; width:396px; height:22px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">(together with max pooling) increases the RF size of the top units. Since the CNNs have fewer
+<br>convolutional layers than the time-unfolded RCNNs, their RF sizes of the top units are smaller.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:119px; top:5360px; width:170px; height:162px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">Model
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">Liu </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">et al</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">.[15]
+<br>Tighe and Lazebnik [27]
+<br>Eigen and Fergus [3]
+<br>Singh and Kosecka [23]
+<br>Tighe and Lazebnik [26]
+<br>Multi-scale CNN + cover [5]
+<br>Multi-scale CNN + cover (balanced) [5]
+<br>Top-down RCNN [19]
+<br>Multi-scale CNN + rCPN [21]
+<br>Multi-scale CNN + rCPN (balanced) [21]
+<br>RCNN
+<br>RCNN (balanced)
+<br>RCNN-small
+<br>RCNN-large
+<br>FCNN [16] (</span><span style="font-family: SBKTUN+CMSY9; font-size:15px">∗</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">ﬁnetuned from VGG model [22])
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:302px; top:5360px; width:44px; height:162px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">No. Param.
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">NA
+<br>NA
+<br>NA
+<br>NA
+<br>NA
+<br>0.43 M
+<br>0.43 M
+<br>0.09 M
+<br>0.80 M
+<br>0.80 M
+<br>0.28 M
+<br>0.28 M
+<br>0.07 M
+<br>0.65 M
+<br>134 M
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:358px; top:5360px; width:133px; height:162px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">PA (%) CA (%) Time (s)
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">31 (CPU)
+<br>76.7
+<br>77.0
+<br>8.4 (CPU)
+<br>16.6 (CPU)
+<br>77.1
+<br>79.2
+<br>20 (CPU)
+<br></span><span style="font-family: SBKTUN+CMSY9; font-size:15px">≥ </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">8.4 (CPU)
+<br>78.6
+<br>NA
+<br>78.5
+<br>72.3
+<br>NA
+<br>NA
+<br>77.7
+<br>0.37 (GPU)
+<br>79.6
+<br>0.37 (GPU)
+<br>75.5
+<br>0.03 (GPU)
+<br>83.5
+<br>79.3
+<br>0.03 (GPU)
+<br></span><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">0.02 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">(GPU)
+<br>81.7
+<br>84.3
+<br>0.04 (GPU)
+<br></span><span style="font-family: SBKTUN+CMSY9; font-size:15px">∼ </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">0.33 (GPU)
+<br></span><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">85.1
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:398px; top:5371px; width:15px; height:151px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">NA
+<br>30.1
+<br>32.5
+<br>33.8
+<br>39.2
+<br>29.6
+<br>50.8
+<br>29.8
+<br>33.6
+<br>48.0
+<br>35.8
+<br></span><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">57.1
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">32.6
+<br>41.0
+<br>51.7
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:146px; top:5532px; width:318px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Table 2: Comparison with the state-of-the-art models over the Sift Flow dataset.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:5561px; width:213px; height:12px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:12px">4.3 Comparison with the State-of-the-art Models
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:5582px; width:396px; height:55px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Next, we compare the results of RCNN and the state-of-the-art models. The RCNN with </span><span style="font-family: OKODYU+CMMI10; font-size:9px">γ </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 1
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and </span><span style="font-family: OKODYU+CMMI10; font-size:9px">T </span><span style="font-family: FCRDZR+CMR10; font-size:9px">= 5 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">is used for comparison. The results are obtained using the upsampling testing approach
+<br>for efﬁciency. Data augmentation is employed in training because it is used by many other models
+<br>[5, 21]. The images are only preprocessed by removing the average RGB values computed over
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">training images.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:147px; top:5647px; width:112px; height:132px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">Model
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">Gould </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">et al</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">. [6]
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">Tighe and Lazebnik [27]
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">Socher </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">et al</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">. [24]
+<br>Eigen and Fergus [3]
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">Singh and Kosecka [23]
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">Lempitsky </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">et al</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">. [13]
+<br>Multiscale CNN + CRF [5]
+<br>Top-down RCNN [19]
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">Single-scale CNN + rCPN [21]
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">Multiscale CNN + rCPN [21]
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">Zoom-out [17]
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">RCNN
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:271px; top:5647px; width:44px; height:132px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">No. Param.
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">NA
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">NA
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">NA
+<br>NA
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">NA
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">NA
+<br>0.43M
+<br>0.09M
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">0.80M
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">0.80M
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">0.23 M
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">0.28M
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:327px; top:5647px; width:113px; height:132px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">PA (%) CA (%) Time (s)
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">76.4
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">77.5
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">78.1
+<br>75.3
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">74.1
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">81.9
+<br>81.4
+<br>80.2
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">81.9
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">81.0
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">82.1
+<br></span><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">83.1
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:409px; top:5658px; width:55px; height:121px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">30 to 60 (CPU)
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">12 (CPU)
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">NA
+<br>16.6 (CPU)
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">20 (CPU)
+<br></span><span style="font-family: SBKTUN+CMSY9; font-size:15px">≥ </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">60 (CPU)
+<br>60.5 (CPU)
+<br>10.6 (CPU)
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">0.5 (GPU)
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">0.37 (GPU)
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">NA
+<br></span><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:11px">0.03 </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">(GPU)
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:367px; top:5658px; width:15px; height:121px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">NA
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">NA
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">NA
+<br>66.5
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">62.2
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">72.4
+<br>76.0
+<br>69.9
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">73.6
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">78.8
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">77.3
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">74.8
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:122px; top:5789px; width:366px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">Table 3: Comparison with the state-of-the-art models over the Stanford Background dataset.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:5811px; width:396px; height:22px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">The results over the Sift Flow dataset are shown in Table 2. Besides the PA and CA, the time for
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">processing an image is also presented. For neural network models, the number of parameters are
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:303px; top:5851px; width:4px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">7
+<br></span></div><div style="position:absolute; border: figure 1px solid; writing-mode:False; left:127px; top:5006px; width:356px; height:270px;"><span style="position:absolute; border: black 1px solid; left:127px; top:5183px; width:481px; height:270px;"></span>
+<div style="position:absolute; border: figure 1px solid; writing-mode:False; left:127px; top:5183px; width:92px; height:56px;"></div><div style="position:absolute; border: figure 1px solid; writing-mode:False; left:223px; top:5183px; width:85px; height:56px;"></div><div style="position:absolute; border: figure 1px solid; writing-mode:False; left:398px; top:5183px; width:85px; height:56px;"></div><div style="position:absolute; border: figure 1px solid; writing-mode:False; left:310px; top:5183px; width:85px; height:56px;"></div><div style="position:absolute; border: figure 1px solid; writing-mode:False; left:199px; top:5244px; width:222px; height:32px;"></div></div><span style="position:absolute; border: black 1px solid; left:114px; top:5363px; width:383px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:114px; top:5373px; width:383px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:114px; top:5423px; width:383px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:114px; top:5473px; width:383px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:114px; top:5514px; width:383px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:114px; top:5524px; width:383px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:141px; top:5649px; width:329px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:141px; top:5660px; width:329px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:141px; top:5720px; width:329px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:141px; top:5770px; width:329px; height:0px;"></span>
+<span style="position:absolute; border: black 1px solid; left:141px; top:5780px; width:329px; height:0px;"></span>
+<span style="position:absolute; border: gray 1px solid; left:0px; top:5944px; width:612px; height:792px;"></span>
+<div style="position:absolute; top:5944px;"><a name="8">Page 8</a></div>
+<div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:6025px; width:396px; height:315px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">shown. When extra training data from other datasets is not used, the RCNN outperforms all other
+<br>models in terms of the PA metric by a signiﬁcant margin.
+<br>The RCNN has fewer parameters than most of the other neural network models except the top-down
+<br>RCNN [19]. A small RCNN (RCNN-small) is then constructed by reducing the numbers of feature
+<br>maps in RCNN to 16, 32 and 64, respectively, so that its total number of parameters is 0.07 million.
+<br>The PA and CA of the small RCNN are </span><span style="font-family: FCRDZR+CMR10; font-size:9px">81</span><span style="font-family: OKODYU+CMMI10; font-size:9px">.</span><span style="font-family: FCRDZR+CMR10; font-size:9px">7% </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">and </span><span style="font-family: FCRDZR+CMR10; font-size:9px">32</span><span style="font-family: OKODYU+CMMI10; font-size:9px">.</span><span style="font-family: FCRDZR+CMR10; font-size:9px">6%</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">, respectively, signiﬁcantly higher than
+<br>those of the top-down RCNN.
+<br>Note that better result over this dataset has been achieved by the fully convolutional network (FCN)
+<br>[16]. However, FCN is ﬁnetuned from the VGG [22] net trained over the 1.2 million images of
+<br>ImageNet, and has approximately 134 million parameters. Being trained over 2488 images, RCNN
+<br>is only outperformed by 1.6 percent on PA. This gap can be further reduced by using larger RCNN
+<br>models. For example, the RCNN-large in Table 1 achieves PA of </span><span style="font-family: FCRDZR+CMR10; font-size:9px">84</span><span style="font-family: OKODYU+CMMI10; font-size:9px">.</span><span style="font-family: FCRDZR+CMR10; font-size:9px">3% </span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">with data augmentation.
+<br>The class distribution in the Sift Flow dataset is highly unbalanced, which is harmful to the CA
+<br>performance. In [5], frequency balance is used so that patches in different classes appear in the
+<br>same frequency. This operation greatly enhance the CA value. For better comparison, we also test
+<br>an RCNN with weighted sampling (balanced) so that the rarer classes apprear more frequently. In
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">this case, the RCNN achieves a much higher CA than other methods including FCN, while still
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">keeping a good PA.
+<br>The results over the Stanford Background dataset are shown in Table 3. The set of hyper-parameters
+<br>used for the Sift Flow dataset is adopted without further tuning. Frequency balance is not used. The
+<br>RCNN again achieves the best PA score, although CA is not the best. Some typical results of RCNN
+<br>are shown in Figure 3.
+<br>On a GTX Titan black GPU, it takes about 0.03 second for the RCNN and 0.02 second for the
+<br>RCNN-small to process an image. Compared with other models, the efﬁciency of RCNN is mainly
+<br>attributed to its end-to-end property. For example, the rCPN model takes much time in obtaining the
+<br>superpixels.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:6355px; width:75px; height:15px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:15px">5 Conclusion
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:6382px; width:396px; height:66px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">A multi-scale recurrent convolutional neural network is used for scene labeling. The model is able to
+<br>perform local feature extraction and context integration simultaneously in each parameterized layer,
+<br>therefore particularly ﬁts this application because both local and global information are critical for
+<br>determining the label of a pixel in an image. This is an end-to-end approach and can be simply
+<br>trained by the BPTT algorithm. Experimental results over two benchmark datasets demonstrate the
+<br>effectiveness and efﬁciency of the model.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:6463px; width:98px; height:15px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:15px">Acknowledgements
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:6490px; width:396px; height:55px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">We are grateful to the anonymous reviewers for their valuable comments. This work was supported
+<br>in part by the National Basic Research Program (973 Program) of China under Grant 2012CB316301
+<br>and Grant 2013CB329403, in part by the National Natural Science Foundation of China under Grant
+<br>61273023, Grant 91420201, and Grant 61332007, in part by the Natural Science Foundation of
+<br>Beijing under Grant 4132046.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:6559px; width:396px; height:33px;"><span style="font-family: VFUOIP+NimbusRomNo9L-Medi; font-size:15px">References
+<br></span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[1] L.-C. Chen, G. Papandreou, I. Kokkinos, K. Murphy, and A. L. Yuille. Semantic image segmentation
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:6592px; width:250px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">with deep convolutional nets and fully connected crfs. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">ICLR</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, 2015.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:112px; top:6606px; width:391px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[2] J. Deng, W. Dong, R. Socher, L.-J. Li, K. Li, and L. Fei-Fei. Imagenet: A large-scale hierarchical image
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:6616px; width:151px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">database. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">CVPR</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages 248–255, 2009.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:112px; top:6630px; width:391px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[3] D. Eigen and R. Fergus. Nonparametric image parsing using adaptive neighbor sets. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">CVPR</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:6640px; width:65px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">2799–2806, 2012.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:112px; top:6655px; width:391px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[4] D. Eigen, J. Rolfe, R. Fergus, and Y. LeCun. Understanding deep architectures using a recursive convo-
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:6664px; width:118px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">lutional network. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">ICLR</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, 2014.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:303px; top:6693px; width:4px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">8
+<br></span></div><span style="position:absolute; border: gray 1px solid; left:0px; top:6786px; width:612px; height:792px;"></span>
+<div style="position:absolute; top:6786px;"><a name="9">Page 9</a></div>
+<div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:112px; top:6868px; width:391px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[5] C. Farabet, C. Couprie, L. Najman, and Y. LeCun. Learning hierarchical features for scene labeling. </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">IEEE
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:6878px; width:332px; height:10px;"><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">Transactions on Pattern Analysis and Machine Intelligence (PAMI)</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, 35(8):1915–1929, 2013.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:112px; top:6892px; width:391px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[6] S. Gould, R. Fulton, and D. Koller. Decomposing a scene into geometric and semantically consistent
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:6902px; width:127px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">regions. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">ICCV</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages 1–8, 2009.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:112px; top:6916px; width:391px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[7] D. Grangier, L. Bottou, and R. Collobert. Deep convolutional networks for scene parsing. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">ICML Deep
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:6926px; width:133px; height:10px;"><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">Learning Workshop</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, volume 3, 2009.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:112px; top:6940px; width:391px; height:30px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[8] A. Graves, M. Liwicki, S. Fern´andez, R. Bertolami, H. Bunke, and J. Schmidhuber. A novel connectionist
+<br>system for unconstrained handwriting recognition. </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">IEEE Transactions on Pattern Analysis and Machine
+<br>Intelligence (PAMI)</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, 31(5):855–868, 2009.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:112px; top:6974px; width:391px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[9] A. Graves, A.-r. Mohamed, and G. Hinton. Speech recognition with deep recurrent neural networks. In
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:6984px; width:121px; height:10px;"><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">ICASSP</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages 6645–6649, 2013.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:6998px; width:396px; height:30px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[10] Y. Jia, E. Shelhamer, J. Donahue, S. Karayev, J. Long, R. Girshick, S. Guadarrama, and T. Darrell.
+<br>Caffe: Convolutional architecture for fast feature embedding. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">Proceedings of the ACM International
+<br>Conference on Multimedia</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages 675–678, 2014.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7032px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[11] A. Krizhevsky, I. Sutskever, and G. E. Hinton. Imagenet classiﬁcation with deep convolutional neural
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7042px; width:159px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">networks. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">NIPS</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages 1097–1105, 2012.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7056px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[12] Y. LeCun, B. Boser, J. S. Denker, D. Henderson, R. E. Howard, W. Hubbard, and L. D. Jackel. Backprop-
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7066px; width:342px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">agation applied to handwritten zip code recognition. </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">Neural Computation</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, 1(4):541–551, 1989.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7080px; width:395px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[13] V. Lempitsky, A. Vedaldi, and A. Zisserman. A pylon model for semantic segmentation. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">NIPS</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7090px; width:65px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">1485–1493, 2011.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7103px; width:395px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[14] M. Liang and X. Hu. Recurrent convolutional neural network for object recognition. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">CVPR</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7114px; width:65px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">3367–3375, 2015.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7127px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[15] C. Liu, J. Yuen, and A. Torralba. Nonparametric scene parsing via label transfer. </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">IEEE Transactions on
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7137px; width:277px; height:10px;"><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">Pattern Analysis and Machine Intelligence (PAMI)</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, 33(12):2368–2382, 2011.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7151px; width:395px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[16] J. Long, E. Shelhamer, and T. Darrell. Fully convolutional networks for semantic segmentation. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">CVPR</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">,
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7161px; width:20px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">2015.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7175px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[17] M. Mostajabi, P. Yadollahpour, and G. Shakhnarovich. Feedforward semantic segmentation with zoom-
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7185px; width:104px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">out features. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">CVPR</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, 2015.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7199px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[18] R. Mottaghi, X. Chen, X. Liu, N.-G. Cho, S.-W. Lee, S. Fidler, R. Urtasun, and A. Yuille. The role of
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7209px; width:358px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">context for object detection and semantic segmentation in the wild. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">CVPR</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages 891–898, 2014.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7223px; width:395px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[19] P. H. Pinheiro and R. Collobert. Recurrent convolutional neural networks for scene parsing. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">ICML</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">,
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7233px; width:20px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">2014.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7247px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[20] P. Sermanet, D. Eigen, X. Zhang, M. Mathieu, R. Fergus, and Y. LeCun. Overfeat: Integrated recognition,
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7257px; width:259px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">localization and detection using convolutional networks. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">ICLR</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, 2014.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7271px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[21] A. Sharma, O. Tuzel, and M.-Y. Liu. Recursive context propagation network for semantic scene labeling.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7281px; width:120px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">NIPS</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages 2447–2455. 2014.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7295px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[22] K. Simonyan and A. Zisserman. Very deep convolutional networks for large-scale image recognition.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7305px; width:103px; height:10px;"><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">CoRR</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, abs/1409.1556, 2014.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7319px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[23] G. Singh and J. Kosecka. Nonparametric scene parsing with adaptive feature relevance and semantic
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7329px; width:156px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">context. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">CVPR</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages 3151–3157, 2013.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7343px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[24] R. Socher, C. C. Lin, C. Manning, and A. Y. Ng. Parsing natural scenes and natural language with
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7353px; width:211px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">recursive neural networks. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">ICML</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages 129–136, 2011.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:107px; top:7366px; width:395px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[25] I. Sutskever, O. Vinyals, and Q. V. Le. Sequence to sequence learning with neural networks. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">NIPS</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">,
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7377px; width:87px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">pages 3104–3112, 2014.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:7390px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[26] J. Tighe and S. Lazebnik. Finding things: Image parsing with regions and per-exemplar detectors. In
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7400px; width:114px; height:10px;"><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">CVPR</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, pages 3001–3008, 2013.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:7414px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[27] J. Tighe and S. Lazebnik. Superparsing: Scalable nonparametric image parsing with superpixels. </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">Inter-
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7424px; width:245px; height:10px;"><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">national Journal of Computer Vision (IJCV)</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, 101(2):329–349, 2013.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:7438px; width:395px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[28] P. J. Werbos. Backpropagation through time: what it does and how to do it. </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">Proceedings of the IEEE</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">,
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7448px; width:91px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">78(10):1550–1560, 1990.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:108px; top:7462px; width:396px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">[29] S. Zheng, S. Jayasumana, B. Romera-Paredes, V. Vineet, Z. Su, D. Du, C. Huang, and P. Torr. Conditional
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:127px; top:7472px; width:213px; height:10px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">random ﬁelds as recurrent neural networks. In </span><span style="font-family: ZLABHK+NimbusRomNo9L-ReguItal; font-size:10px">ICCV</span><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:10px">, 2015.
+<br></span></div><div style="position:absolute; border: textbox 1px solid; writing-mode:lr-tb; left:303px; top:7535px; width:4px; height:12px;"><span style="font-family: HZAKVR+NimbusRomNo9L-Regu; font-size:12px">9
+<br></span></div><div style="position:absolute; top:0px;">Page: <a href="#1">1</a>, <a href="#2">2</a>, <a href="#3">3</a>, <a href="#4">4</a>, <a href="#5">5</a>, <a href="#6">6</a>, <a href="#7">7</a>, <a href="#8">8</a>, <a href="#9">9</a></div>
+</body></html>
