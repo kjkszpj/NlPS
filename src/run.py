@@ -6,7 +6,7 @@ X = lda.utils.ldac2dtm(open('../data/first.ldac'), offset=0)
 vocab = [line[:-1] for line in open('../data/stem_dict.txt').readlines()]
 # titles = lda.datasets.load_reuters_titles()
 
-model = lda.LDA(n_topics=7, n_iter=1500, random_state=1)
+model = lda.LDA(n_topics=7, n_iter=833, random_state=1)
 model.fit(X)
 
 topic_word = model.topic_word_

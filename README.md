@@ -27,6 +27,7 @@ by Peijie You
 -   fast enough for LDA?
 
 ##  demo
+
 -   topic show
 -   log likelihood curve
 -   word freq
@@ -34,6 +35,8 @@ by Peijie You
     -   dict vs stem
     -   different dictionary
 -   topic for single doc
+
+-   topic distribute over dataset 
 -   handcraft vs random pick
 -   history
 
