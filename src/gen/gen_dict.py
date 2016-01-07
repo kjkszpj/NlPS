@@ -12,14 +12,20 @@ my_stop = [line[:-1] for line in my_stop]
 total_words = []
 temp = corpus.words()
 for word in temp:
-    if (word not in std_stop) and (word not in my_stop):
+    if (word not in std_stop) and (word not in my_stop) and (len(word) > 2):
         total_words.append(word)
+
+threshold = 8
+fd = nltk.FreqDist(total_words)
+for a in fd.most_common():
+    if a[1] >= threshold:
+        print a
 
 outf = open('../../data/dict.txt', 'w')
 fd = nltk.FreqDist(total_words)
 print fd
 for a in fd.most_common():
-    if a[1] > 2:
+    if a[1] >= threshold:
         outf.write('%s\n' % a[0])
 
 stemf = open('../../data/stem_dict.txt', 'w')

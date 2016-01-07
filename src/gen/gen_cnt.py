@@ -14,7 +14,7 @@ m = len(dict)
 outf = open('../../data/first.ldac', 'w')
 stem_dict = [line[:-1] for line in open('../../data/stem_dict.txt').readlines()]
 
-for paper in list:
+for paper in list[:-10]:
     word = [porter.stem(s) for s in corpus.words(paper) if s in dict]
     word = [s for s in word if s in stem_dict]
     # print len(corpus.words(paper)), len(word)
