@@ -28,26 +28,30 @@ by Peijie You
 
 ##  demo
 -   topic show
+-   log likelihood curve
+-   word freq
 -   comparison
     -   dict vs stem
     -   different dictionary
--   word freq
 -   topic for single doc
--   log likelihood curve
+-   handcraft vs random pick
+-   history
 
 ##  todo
 
 -   interval thing
 -   stop word thing
--   history thing
+-   history thing?
 
 ##  Problem arised
 
 -   stop word in scholar
 -   命名实体?
--   自动找出stop word
 -   stem-100的奇怪现象
 -   取什么频率区间内的word, dimension curse or just OK?
+-   长尾?
+-   dict rather than list
+-   主题 is NOT 方向
 
 ##  Other
 -   Python2 this time

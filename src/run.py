@@ -8,6 +8,7 @@ vocab = [line[:-1] for line in open('../data/stem_dict.txt').readlines()]
 
 model = lda.LDA(n_topics=7, n_iter=1500, random_state=1)
 model.fit(X)
+
 topic_word = model.topic_word_
 n_top_words = 25
 for i, topic_dist in enumerate(topic_word):
