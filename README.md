@@ -23,14 +23,31 @@ by Peijie You
 -   lda
 -   fine tune
 -   history
-
 -   announce dataset
 -   fast enough for LDA?
+
+##  demo
+-   topic show
+-   comparison
+    -   dict vs stem
+    -   different dictionary
+-   word freq
+-   topic for single doc
+-   log likelihood curve
+
+##  todo
+
+-   interval thing
+-   stop word thing
+-   history thing
 
 ##  Problem arised
 
 -   stop word in scholar
 -   命名实体?
+-   自动找出stop word
+-   stem-100的奇怪现象
+-   取什么频率区间内的word, dimension curse or just OK?
 
 ##  Other
 -   Python2 this time
@@ -39,6 +56,7 @@ by Peijie You
 ##  Requirement
 -   python2
 -   pdfminer
+-   lda
 
 ---
 
