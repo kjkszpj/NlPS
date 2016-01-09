@@ -1,0 +1,21 @@
+\contentsline {section}{\numberline {1}选题介绍}{2}{section.1}
+\contentsline {section}{\numberline {2}算法背景}{2}{section.2}
+\contentsline {subsection}{\numberline {2.1}文本建模}{2}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Dirichlet分布与多项分布}{3}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Gibbs采样}{3}{subsection.2.3}
+\contentsline {section}{\numberline {3}实现过程}{3}{section.3}
+\contentsline {subsection}{\numberline {3.1}语料收集}{3}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}PDF数据处理}{3}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}单词筛选}{5}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}初步尝试LDA效果}{6}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}改进1}{6}{subsection.3.5}
+\contentsline {subsection}{\numberline {3.6}改进后效果}{6}{subsection.3.6}
+\contentsline {subsection}{\numberline {3.7}More?}{7}{subsection.3.7}
+\contentsline {section}{\numberline {4}效果及分析}{7}{section.4}
+\contentsline {subsection}{\numberline {4.1}How to Run It?}{7}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}数据集效果}{8}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}LDA主题效果}{10}{subsection.4.3}
+\contentsline {section}{\numberline {5}The End}{12}{section.5}
+\contentsline {subsection}{\numberline {5.1}总结}{13}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Counterclaim?}{13}{subsection.5.2}
+\contentsline {section}{\numberline {6}Thank You}{14}{section.6}
