@@ -1,0 +1,7 @@
+Topic 0	optimaztion			: optim bound problem distribut method algorithm result converg comput case convex follow sampl gener point gradient linear rate step iter theorem approxim estim set non
+Topic 1	graph model			: graph node time edg network tree number infer cluster submodular partit variabl weight structur model given problem greedi size random constraint algorithm order comput set
+Topic 2 online learning		: regret action bandit polici arm state bound game problem risk reward optim observ time decis agent control expect valu inform probabl player cost strategi base
+Topic 3 probability & stat 	: distribut estim sampl model infer approxim state process posterior paramet gaussian variat likelihood time method comput latent observ variabl mean gener figur prior bayesian use
+Topic 4	deep learning		: network train imag layer neural input deep gener object model output convolut use sequenc propos perform comput predict represent result featur weight map word dataset
+Topic 5	matrix				: matrix rank estim spars error norm vector dimension problem sampl low matric statist result gaussian comput random condit column observ entri high paramet spectral theorem
+Topic 6 machine learning	: label classi featur kernel predict cation dataset train space exampl embed metric test loss class queri method perform task margin differ base score number set
